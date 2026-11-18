@@ -19,6 +19,68 @@
 </style>
 </head>
 <body class="min-h-screen">
+
+
+<div class="mx-auto max-w-md min-h-screen flex flex-col">
+  <header class="sticky top-0 z-20 bg-[#0f1115]/95 backdrop-blur px-4 pt-3 pb-2 safe-b">
+    <div class="flex items-center gap-2">
+      <button id="btn-back" class="hidden text-2xl px-1 text-sky-400">←</button>
+      <h1 id="hdr-title" class="text-xl font-bold flex-1 truncate">Каталог</h1>
+      <span id="hdr-sub" class="text-xs text-slate-400"></span>
+    </div>
+    <div id="hdr-search" class="mt-2">
+      <input id="search" type="search" placeholder="Поиск бренда…" autocomplete="off"
+        class="w-full rounded-xl bg-[#1a1f28] px-4 py-2.5 text-[15px] outline-none border border-transparent focus:border-sky-600 placeholder:text-slate-500">
+    </div>
+  </header>
+  <main id="view-brands" class="flex-1 px-3 pb-28 fade"></main>
+  <main id="view-flavors" class="hidden flex-1 px-3 pb-28 fade"></main>
+  <div id="view-empty" class="hidden flex-1 items-center justify-center text-center text-slate-400 px-8 pb-28">
+    <div><div class="text-4xl mb-3">📦</div>Каталог не загрузился</div>
+  </div>
+  <div class="fixed bottom-0 inset-x-0 z-30 mx-auto max-w-md px-3 pb-3 safe-b">
+    <button id="cart-bar" class="w-full rounded-2xl bg-[#1a2230] border border-[#2b3a55] px-4 py-3 flex items-center gap-3 text-left shadow-lg">
+      <span class="text-xl">🛒</span>
+      <span class="flex-1"><span class="block font-semibold">Корзина</span>
+      <span id="cart-sum" class="block text-xs text-slate-400">пусто</span></span>
+      <span id="cart-count" class="hidden min-w-[26px] h-[26px] px-1.5 rounded-full bg-sky-600 text-white text-xs font-bold grid place-items-center"></span>
+      <span class="text-slate-400" id="cart-chev">▴</span>
+    </button>
+  </div>
+  <div id="sheet" class="sheet closed fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md rounded-t-3xl bg-[#151a23] border-t border-[#2b3a55] px-4 pt-3 safe-b" style="max-height:72vh">
+    <div class="flex items-center justify-between">
+      <h2 class="font-bold text-lg">Корзина</h2>
+      <div class="flex gap-3 text-sm">
+        <button id="btn-clear" class="text-rose-400">Очистить</button>
+        <button id="btn-close" class="text-slate-400 px-1">✕</button>
+      </div>
+    </div>
+    <div id="cart-items" class="overflow-y-auto my-2 space-y-1" style="max-height:38vh"></div>
+    <button id="btn-submit" class="w-full rounded-2xl bg-sky-600 active:bg-sky-700 py-3.5 font-bold text-[16px] mb-1">Оформить</button>
+  </div>
+  <div id="scrim" class="hidden fixed inset-0" style="z-index:35;background:rgba(0,0,0,.5)"></div>
+  <div id="done" class="hidden fixed inset-0 z-50 bg-black/70 grid place-items-center p-6">
+    <div class="w-full max-w-sm rounded-3xl bg-[#161c27] border border-[#2b3a55] p-5 fade">
+      <div class="text-3xl mb-2">✅</div>
+      <h3 class="font-bold text-lg mb-1">Отправь заказ боту</h3>
+      <p class="text-sm text-slate-400 mb-1">Открылся чат с готовым сообщением — нажми «Отправить». Если не открылся — скопируй текст:</p>
+      <pre id="done-text" class="text-[13px] bg-[#0f131b] rounded-xl p-3 my-3 whitespace-pre-wrap"></pre>
+      <div class="flex gap-2">
+        <button id="btn-copy" class="flex-1 rounded-xl bg-[#243044] py-2.5 text-sm font-semibold">Скопировать</button>
+        <button id="btn-ok" class="flex-1 rounded-xl bg-sky-600 py-2.5 text-sm font-semibold">Готово</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener('error', e => {
+  const el = document.getElementById('view-empty');
+  if (el && !document.querySelector('#view-brands button')) {
+    el.classList.remove('hidden'); el.classList.add('flex');
+    el.innerHTML = '<div><div class="text-3xl mb-2">⚠️</div>Ошибка: ' + (e.message || 'загрузка не удалась') + '</div>';
+  }
+});
+</script>
 <script>
 // ======= НАСТРОЙКА: username твоего бота (без @) =======
 const BOT_USERNAME = "sigi_bugri_bot";   // <-- твой бот
@@ -198,57 +260,5 @@ const BOT_USERNAME = "sigi_bugri_bot";   // <-- твой бот
   document.addEventListener('visibilitychange', () => { if (!document.hidden) loadCatalog(); });
 })();
 </script>
-
-<div class="mx-auto max-w-md min-h-screen flex flex-col">
-  <header class="sticky top-0 z-20 bg-[#0f1115]/95 backdrop-blur px-4 pt-3 pb-2 safe-b">
-    <div class="flex items-center gap-2">
-      <button id="btn-back" class="hidden text-2xl px-1 text-sky-400">←</button>
-      <h1 id="hdr-title" class="text-xl font-bold flex-1 truncate">Каталог</h1>
-      <span id="hdr-sub" class="text-xs text-slate-400"></span>
-    </div>
-    <div id="hdr-search" class="mt-2">
-      <input id="search" type="search" placeholder="Поиск бренда…" autocomplete="off"
-        class="w-full rounded-xl bg-[#1a1f28] px-4 py-2.5 text-[15px] outline-none border border-transparent focus:border-sky-600 placeholder:text-slate-500">
-    </div>
-  </header>
-  <main id="view-brands" class="flex-1 px-3 pb-28 fade"></main>
-  <main id="view-flavors" class="hidden flex-1 px-3 pb-28 fade"></main>
-  <div id="view-empty" class="hidden flex-1 items-center justify-center text-center text-slate-400 px-8 pb-28">
-    <div><div class="text-4xl mb-3">📦</div>Каталог не загрузился</div>
-  </div>
-  <div class="fixed bottom-0 inset-x-0 z-30 mx-auto max-w-md px-3 pb-3 safe-b">
-    <button id="cart-bar" class="w-full rounded-2xl bg-[#1a2230] border border-[#2b3a55] px-4 py-3 flex items-center gap-3 text-left shadow-lg">
-      <span class="text-xl">🛒</span>
-      <span class="flex-1"><span class="block font-semibold">Корзина</span>
-      <span id="cart-sum" class="block text-xs text-slate-400">пусто</span></span>
-      <span id="cart-count" class="hidden min-w-[26px] h-[26px] px-1.5 rounded-full bg-sky-600 text-white text-xs font-bold grid place-items-center"></span>
-      <span class="text-slate-400" id="cart-chev">▴</span>
-    </button>
-  </div>
-  <div id="sheet" class="sheet closed fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md rounded-t-3xl bg-[#151a23] border-t border-[#2b3a55] px-4 pt-3 safe-b" style="max-height:72vh">
-    <div class="flex items-center justify-between">
-      <h2 class="font-bold text-lg">Корзина</h2>
-      <div class="flex gap-3 text-sm">
-        <button id="btn-clear" class="text-rose-400">Очистить</button>
-        <button id="btn-close" class="text-slate-400 px-1">✕</button>
-      </div>
-    </div>
-    <div id="cart-items" class="overflow-y-auto my-2 space-y-1" style="max-height:38vh"></div>
-    <button id="btn-submit" class="w-full rounded-2xl bg-sky-600 active:bg-sky-700 py-3.5 font-bold text-[16px] mb-1">Оформить</button>
-  </div>
-  <div id="scrim" class="hidden fixed inset-0" style="z-index:35;background:rgba(0,0,0,.5)"></div>
-  <div id="done" class="hidden fixed inset-0 z-50 bg-black/70 grid place-items-center p-6">
-    <div class="w-full max-w-sm rounded-3xl bg-[#161c27] border border-[#2b3a55] p-5 fade">
-      <div class="text-3xl mb-2">✅</div>
-      <h3 class="font-bold text-lg mb-1">Отправь заказ боту</h3>
-      <p class="text-sm text-slate-400 mb-1">Открылся чат с готовым сообщением — нажми «Отправить». Если не открылся — скопируй текст:</p>
-      <pre id="done-text" class="text-[13px] bg-[#0f131b] rounded-xl p-3 my-3 whitespace-pre-wrap"></pre>
-      <div class="flex gap-2">
-        <button id="btn-copy" class="flex-1 rounded-xl bg-[#243044] py-2.5 text-sm font-semibold">Скопировать</button>
-        <button id="btn-ok" class="flex-1 rounded-xl bg-sky-600 py-2.5 text-sm font-semibold">Готово</button>
-      </div>
-    </div>
-  </div>
-</div>
 </body>
 </html>
